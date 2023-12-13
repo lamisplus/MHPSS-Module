@@ -1,7 +1,7 @@
-# Prep application
+# MHPSS application
 
 ## Starting the website on your local machine
-Just start `PrepApplication` with the *dev* profile and keep it running.
+Just start `MHPSSApplication` with the *dev* profile and keep it running.
 This will startup the website using a local database on port **8080**.
 
 Browsing to http://localhost:8080 should give you the homepage.

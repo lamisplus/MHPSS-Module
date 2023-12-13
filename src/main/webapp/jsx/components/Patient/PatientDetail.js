@@ -1,4 +1,4 @@
-import React,{useState, useEffect} from 'react';
+import React,{useState, useContext, useEffect} from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { Link } from 'react-router-dom'
@@ -10,15 +10,9 @@ import { useHistory } from "react-router-dom";
 import SubMenu from './SubMenu';
 import RecentHistory from './../History/RecentHistory';
 import PatientHistory from './../History/PatientHistory'
-import ClinicVisit from '../Consultation/Index'
-import PrEPCommencementForm from './../PrepServices/PrEPCommencementForm';
-import PrEPDiscontinuationsInterruptions from './../PrepServices/PrEPDiscontinuationsInterruptions';
-import PrEPEligibiltyScreeningForm from './../PrepServices/PrEPEligibiltyScreeningForm';
-import PrEPVisit from './../PrepServices/PrEPVisit';
-import PrEPRegistrationForm from './../PrepServices/PrEPRegistrationForm';
-import Biometrics from './Biometric'
 import axios from "axios";
 import { url as baseUrl, token } from "./../../../api";
+import PatientContext from "./../../context/patient/PatientContext";
 
 const styles = theme => ({
   root: {
@@ -58,52 +52,32 @@ const styles = theme => ({
 
 function PatientCard(props) {
     let history = useHistory();
-    const [patientDetail, setPatientDetail] = useState("")
-    const [activeContent, setActiveContent] = useState({route:"recent-history", id:"", activeTab:"home", actionType:"create", obj:{}});
+    const {patientObject, activeContent, dispatch} = useContext(PatientContext);
     const { classes } = props;
-    const patientObjLocation = history.location && history.location.state ? history.location.state.patientObj : {}
-    //let patientObj =""
-    const prepId = history.location && history.location.state ? history.location.state.prepId : {}
-    //console.log(patientObj)
+
     useEffect(() => {
-      PatientObject()
-     }, []);
-     async function PatientObject() {
-      axios
-          .get(`${baseUrl}prep/persons/${patientObjLocation.personId}`,
-          { headers: {"Authorization" : `Bearer ${token}`} }
-          )
-          .then((response) => {
-            setPatientDetail(response.data);
-            //patientObj=response.data
-          })
-          .catch((error) => {    
-          });        
-    }
+        dispatch({type: 'LOAD_PATIENT_OBJECT', payload: history.location && history.location.state ? history.location.state.patientObj : {}});
+        dispatch({type: 'SET_ACTIVE_CONTENT', payload: {route:"recent-history", id:"", activeTab:"home", actionType:"create", obj:{}}});
+    }, [dispatch]);
+
   return (
     <div className={classes.root}>
       <div className="row page-titles mx-0" style={{marginTop:"0px", marginBottom:"-10px"}}>
 			<ol className="breadcrumb">
-				<li className="breadcrumb-item active"><h4> <Link to={"/"} >PrEP /</Link> Patient Dashboard</h4></li>
+				<li className="breadcrumb-item active"><h4> <Link to={"/"} >MHPSS /</Link> Patient Dashboard</h4></li>
 			</ol>
 		  </div>
       <Card >
         <CardContent>
-            <PatientCardDetail patientObj={patientDetail}  setActiveContent={setActiveContent} patientDetail={patientDetail}/>            
-            <SubMenu patientObj={patientObjLocation}  setActiveContent={setActiveContent} patientDetail={patientDetail}/>
+            <PatientCardDetail />
+            <SubMenu />
             <br/>
-          {activeContent.route==='recent-history' &&(<RecentHistory patientObj={patientObjLocation} setActiveContent={setActiveContent} activeContent={activeContent} prepId={prepId}/>)}
-          {activeContent.route==='biometrics' &&(<Biometrics patientObj={patientObjLocation} setActiveContent={setActiveContent} activeContent={activeContent} prepId={prepId}/>)}
-          {activeContent.route==='consultation' &&( <ClinicVisit patientObj={patientObjLocation} setActiveContent={setActiveContent} activeContent={activeContent} prepId={prepId}/>)}
-          {/* {activeContent==='child-consultation' &&( <ChildConsultation patientObj={patientObj} setActiveContent={setActiveContent}/>)} */}
-          {activeContent.route==='prep-commencement' &&( <PrEPCommencementForm patientObj={patientObjLocation} setActiveContent={setActiveContent} activeContent={activeContent} prepId={prepId} PatientObject={PatientObject}/>)}
-          {activeContent.route==='prep-interruptions' &&( <PrEPDiscontinuationsInterruptions patientObj={patientObjLocation} setActiveContent={setActiveContent} activeContent={activeContent} prepId={prepId} PatientObject={PatientObject}/>)}
-          {activeContent.route==='prep-screening' &&( <PrEPEligibiltyScreeningForm patientObj={patientObjLocation} setActiveContent={setActiveContent} activeContent={activeContent} prepId={prepId} patientDetail={patientDetail} PatientObject={PatientObject}/>)}
-          {activeContent.route==='prep-visit' &&( <PrEPVisit PatientObject={PatientObject}/>)}
-          {activeContent.route==='prep-registration' &&( <PrEPRegistrationForm patientObj={patientObjLocation} setActiveContent={setActiveContent} activeContent={activeContent} prepId={prepId} PatientObject={PatientObject}/>)} 
-          {activeContent.route==='patient-history' &&( <PatientHistory patientObj={patientObjLocation} setActiveContent={setActiveContent} activeContent={activeContent}/>)}         
+
+          {activeContent.route==='patient-history' &&( <PatientHistory />)}
+          {activeContent.route==='recent-history' &&(<RecentHistory />)}
+
           {/* History Pages */}
-         
+
          </CardContent>
       </Card>
     </div>

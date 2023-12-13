@@ -69,7 +69,7 @@ const Patients = (props) => {
         async function patients() {
             setLoading(true)
             axios
-                .get(`${baseUrl}prep/persons`,
+                .get(`${baseUrl}mhpss-screening/persons`,
                 { headers: {"Authorization" : `Bearer ${token}`} }
                 )
                 .then((response) => {
@@ -103,18 +103,14 @@ const Patients = (props) => {
                 hidden:showPPI
             },
             { title: "Hospital Number", field: "hospital_number", filtering: false },
-            { title: "PrEP Code", field: "clientCode", filtering: false },
             { title: "Sex", field: "gender", filtering: false },
             { title: "Age", field: "age", filtering: false },
-            
-            //{ title: "ART Number", field: "v_status", filtering: false },
-            { title: "PrEP Status", field: "status", filtering: false },
             { title: "Actions", field: "actions", filtering: false }, 
             ]}
             //isLoading={loading}
             data={query =>
                 new Promise((resolve, reject) =>
-                    axios.get(`${baseUrl}prep/persons?pageSize=${query.pageSize}&pageNo=${query.page}&searchValue=${query.search}`, { headers: {"Authorization" : `Bearer ${token}`} })
+                    axios.get(`${baseUrl}mhpss-screening/persons?pageSize=${query.pageSize}&pageNo=${query.page}&searchValue=${query.search}`, { headers: {"Authorization" : `Bearer ${token}`} })
                         .then(response => response)
                         .then(result => {
                             
@@ -122,13 +118,9 @@ const Patients = (props) => {
                                 data: result.data.records.map((row) => ({
                                     name:row.firstName + " " + row.surname,
                                     hospital_number: row.hospitalNumber,
-                                    clientCode: row.uniqueId,
-                                    //phone_number:  row.phone,
                                     gender:row && row.gender ? row.gender : "",
                                     age: row.age,
-                                    
-                                    status: (<Label color="blue" size="mini">{row.prepStatus}</Label>),
-                                
+
                                     actions:
                                         <div>
                                             <Link

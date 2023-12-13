@@ -1,17 +1,17 @@
-basePackage: org.lamisplus.modules.prep
-name: PrepModule
-dependencies: {PatientModule: 1.0.0, HivModule: 1.0.0}
+basePackage: org.lamisplus.modules.mhpss
+name: MhpssModule
+dependencies: {PatientModule: 2.0.5, HivModule: 2.1.5}
 store: true
 menus:
-  - icon: fa-solid fa-pills
+  - icon: fa-solid fa-brain
     disabled: false
-    name: PrEP
-    state: PrEP
-    url: /across/resources/static/prep/index.html
-umdLocation: /across/resources/static/prep/index.html
+    name: MHPSS
+    state: MHPSS
+    url: /across/resources/static/mhpss/index.html
+umdLocation: /across/resources/static/mhpss/index.html
 webModules:
-  - breadcrumb: PrEP
-    name: PrepModule
-    path: prep
+  - breadcrumb: MHPSS
+    name: MhpssModule
+    path: mhpss
     position: 99
     ##fa-solid fa-file

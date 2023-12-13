@@ -72,6 +72,7 @@
     "react-chartist": "^0.14.3",
     "react-chartjs": "^1.2.0",
     "react-chartjs-2": "^2.11.1",
+    "react-copy-to-clipboard": "^5.1.0",
     "react-countdown": "^2.3.2",
     "react-date-range": "^1.1.3",
     "react-dom": "^17.0.1",
@@ -124,14 +125,13 @@
     "yup": "^0.32.8"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "react-scripts  start",
     "jsreport": "jsreport-start",
-    "build": "react-scripts build && xcopy /s /y build src\\main\\resources\\views\\static\\prep",
+    "build": "react-scripts  build && xcopy /s /y build src\\main\\resources\\views\\static\\mhpss",
     "serve": "serve -s build",
     "run-build": "react-scripts build && serve",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
-
   },
   "eslintConfig": {
     "extends": [

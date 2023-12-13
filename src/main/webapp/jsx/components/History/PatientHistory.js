@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 import MaterialTable from 'material-table';
 import axios from "axios";
 import { url as baseUrl } from "./../../../api";
@@ -31,6 +31,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import "@reach/menu-button/styles.css";
 import {  Modal } from "react-bootstrap";
 import { Dropdown,Button, Menu, Icon } from 'semantic-ui-react'
+import PatientContext from "./../../context/patient/PatientContext";
 
 
 const tableIcons = {
@@ -104,27 +105,25 @@ const PatientnHistory = (props) => {
     const [saving, setSaving] = useState(false)
     const [open, setOpen] = React.useState(false)
     const [record, setRecord] = useState(null)
-     const toggle = () => setOpen(!open);
+    const toggle = () => setOpen(!open);
+    const {patientObject, activeContent, dispatch} = useContext(PatientContext);
+
     useEffect(() => {
         PatientHistory()
-      }, [props.patientObj.id]);
-        ///GET LIST OF Patients        
+      }, [patientObject.personUuid]);
         const PatientHistory =()=>{
             setLoading(true)
             axios
-               .get(`${baseUrl}prep/general-activities/patients/${props.patientObj.personId}`,
+               .get(`${baseUrl}mhpss/general-activities/patients/${patientObject.personUuid}`,
                    { headers: {"Authorization" : `Bearer ${token}`} }
                )
                .then((response) => {
                 setLoading(false)                       
                     setRecentActivities(response.data)
                 })
-
                .catch((error) => {
-               //console.log(error);
                });
-           
-          }
+        }
     
     const LoadViewPage =(row,action)=>{
         

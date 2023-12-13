@@ -11,12 +11,12 @@
 	</parent>
 
 	<groupId>org.lamisplus.modules</groupId>
-	<artifactId>prep</artifactId>
+	<artifactId>mhpss</artifactId>
 	<version>1.0.0</version>
 	<packaging>jar</packaging>
 
-	<name>Prep</name>
-	<description>Prep</description>
+	<name>MHPSS</name>
+	<description>MHPSS Module</description>
 
 	<properties>
 		<java.version>1.8</java.version>
@@ -217,6 +217,12 @@
 			<groupId>org.lamisplus.modules</groupId>
 			<artifactId>triage</artifactId>
 			<version>1.0.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.modelmapper</groupId>
+			<artifactId>modelmapper</artifactId>
+			<version>3.1.1</version>
 		</dependency>
 	</dependencies>
 
