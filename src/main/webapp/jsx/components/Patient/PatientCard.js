@@ -21,7 +21,7 @@ import {calculateAge} from "./../../context/patient/PatientAction";
 import {CopyToClipboard} from 'react-copy-to-clipboard';
 import { toast} from "react-toastify";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faClipboard } from '@fortawesome/free-solid-svg-icons';
+import { faClipboard, faCheck } from '@fortawesome/free-solid-svg-icons';
 
 
 //Dtate Picker package
@@ -69,8 +69,10 @@ function PatientCard(props) {
     const [isCopied, setIsCopied] = useState(false);
 
     const copiedNotification = () => {
-        toast("Copied!", {position: toast.POSITION.TOP_RIGHT});
-        setIsCopied(false);
+        //toast("Copied!", {position: toast.POSITION.TOP_RIGHT});
+          setTimeout(() => {
+            setIsCopied(false);
+          }, 3000);
     }
 
     return (
@@ -105,7 +107,7 @@ function PatientCard(props) {
                             Patient ID : <b style={{color:'#0B72AA'}}>{patientObject.hospitalNumber}</b>
                             <CopyToClipboard text={patientObject.hospitalNumber}
                               onCopy={() => setIsCopied(true)}>
-                              <span style={{ marginLeft: '10px' }}><FontAwesomeIcon icon={faClipboard} size="lg" /></span>
+                              <span style={{ marginLeft: '10px' }}><FontAwesomeIcon icon={isCopied ? faCheck : faClipboard} size="lg" /></span>
                             </CopyToClipboard>
                             {isCopied && copiedNotification()}
                         </span>

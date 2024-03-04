@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import axios from "axios";
 import MaterialTable, { MTableToolbar }  from 'material-table';
 import { token as token, url as baseUrl } from "./../../../api";
@@ -31,7 +31,8 @@ import { Label } from 'semantic-ui-react'
 import Moment from "moment";
 import momentLocalizer from "react-widgets-moment";
 import moment from "moment";
-
+import ScreeningContext from '../../context/mhpss/ScreeningContext';
+import ConfirmationContext from '../../context/mhpss/ConfirmationContext';
 //Dtate Picker package
 Moment.locale("en");
 momentLocalizer();
@@ -57,12 +58,17 @@ ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />)
 };
 
 
-
 const Patients = (props) => {    
     const [patientList, setPatientList] = useState([])
     const [loading, setLoading] = useState(true)
     const [showPPI, setShowPPI] = useState(true)
+    const {screening, dispatch: screeningDispatch} = useContext(ScreeningContext);
+    const {confirmation, confirmations, dispatch: confirmationDispatch} = useContext(ConfirmationContext)
+
     useEffect(() => {
+        screeningDispatch({type: 'RESET_SCREENING'});
+        confirmationDispatch({type: 'RESET_CONFIRMATIONS'});
+        confirmationDispatch({type: 'RESET_CONFIRMATION'});
         patients()
       }, []);
         ///GET LIST OF Patients

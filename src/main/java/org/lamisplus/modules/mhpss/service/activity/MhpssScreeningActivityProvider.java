@@ -30,7 +30,6 @@ public class MhpssScreeningActivityProvider implements PatientActivityProvider {
 		String name = "MHPSS Screening";
 		assert mhpssScreening.getId() != null;
 
-		//TODO: change createdDate to proper date
-		return new PatientActivity(mhpssScreening.getId(), name, mhpssScreening.getCreatedAt().toLocalDate(), "", "mhpss-screening");
+		return new PatientActivity(mhpssScreening.getId(), name, mhpssScreening.getEncounterDate(), "", "mhpss-screening");
 	}
 }

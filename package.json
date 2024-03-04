@@ -131,7 +131,8 @@
     "serve": "serve -s build",
     "run-build": "react-scripts build && serve",
     "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "clean": "rmdir /s /q src\\main\\resources\\views\\static"
   },
   "eslintConfig": {
     "extends": [

@@ -13,10 +13,14 @@ import 'bootstrap/dist/css/bootstrap.css';
 import Home from './main/webapp/jsx/components/Home'
 import PatientDetail from './main/webapp/jsx/components/Patient/PatientDetail'
 import { PatientProvider } from './main/webapp/jsx/context/patient/PatientContext';
+import { ScreeningProvider } from './main/webapp/jsx/context/mhpss/ScreeningContext';
+import { ConfirmationProvider } from './main/webapp/jsx/context/mhpss/ConfirmationContext';
 
 export default function App() {
   return (
     <PatientProvider>
+    <ScreeningProvider>
+    <ConfirmationProvider>
         <Router>
           <div>
           <ToastContainer />
@@ -32,6 +36,8 @@ export default function App() {
             </Switch>
           </div>
      </Router>
+ </ConfirmationProvider>
+ </ScreeningProvider>
  </PatientProvider>
   );
 }

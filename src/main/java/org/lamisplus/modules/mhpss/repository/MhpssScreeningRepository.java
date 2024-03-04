@@ -24,7 +24,7 @@ public interface MhpssScreeningRepository extends JpaRepository<MhpssScreening, 
             "OR p.surname ILIKE ?3 OR p.other_name ILIKE ?3 " +
             "OR p.hospital_number ILIKE ?3) "
            , nativeQuery = true)
-    Page<MhpssClient> findAllPersonPrepAndStatusBySearchParam(Integer archived, Long facilityId, String search, Pageable pageable);
+    Page<MhpssClient> findAllPersonBySearchParam(Integer archived, Long facilityId, String search, Pageable pageable);
 
     @Query(value = "SELECT uuid AS personUuid, hospital_number AS hospitalNumber, INITCAP(sex) as gender, CAST (EXTRACT(YEAR from AGE(NOW(),  date_of_birth)) AS INTEGER) as age, "+
             " first_name AS firstName, surname AS surname, other_name AS otherName, " +
@@ -33,7 +33,7 @@ public interface MhpssScreeningRepository extends JpaRepository<MhpssScreening, 
             " FROM patient_person p " +
             " WHERE p.archived=?1 AND p.facility_id=?2 "
             , nativeQuery = true)
-    Page<MhpssClient> findAllPersonPrepAndStatus(Integer archived, Long facilityId, Pageable pageable);
+    Page<MhpssClient> findAllPerson(Integer archived, Long facilityId, Pageable pageable);
 
     List<MhpssScreening> findAllByPerson(Person person);
 }

@@ -6,7 +6,24 @@ const ConfirmationContext = createContext();
 export const ConfirmationProvider = ({children}) => {
     const initialState = {
         confirmations: [],
-        confirmation: {},
+        confirmation: {
+            interventionsRendered: '',
+            sessionModality: '',
+            risksConfirmed: '',
+            currentLevelOfInsight: '',
+            confirmationOutcome: '',
+            confirmedBy: '',
+            gad7: '',
+            auditC: '',
+            pcl5: '',
+            phq9: '',
+            dast10: '',
+            diagnosis: '',
+            diagnosedBy: '',
+            clinicianName: '',
+            encounterDate: ''
+        },
+        action: ''
     }
 
     const [state, dispatch] = useReducer(confirmationReducer, initialState);

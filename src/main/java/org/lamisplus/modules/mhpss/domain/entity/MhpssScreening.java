@@ -12,6 +12,7 @@ import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.*;
 import org.lamisplus.modules.base.domain.entities.Audit;
 import org.lamisplus.modules.patient.domain.entity.Person;
+import org.lamisplus.modules.patient.domain.entity.Visit;
 import org.springframework.data.domain.Persistable;
 
 import javax.persistence.CascadeType;
@@ -19,6 +20,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.*;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
 
@@ -48,7 +50,6 @@ public class MhpssScreening implements Serializable, Persistable<String> {
     @Column(name = "id")
     private String id;
 
-    //TODO: Add Many to one on the patient side
     @JoinColumn(name = "person_uuid", referencedColumnName = "UUID")
     @OneToOne
     private Person person;
@@ -70,6 +71,19 @@ public class MhpssScreening implements Serializable, Persistable<String> {
     @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "mhpssScreening")
     @JsonIgnore
     private Set<MhpssConfirmation> mhpssConfirmation;
+
+    @JoinColumn(name = "patient_visit_id", referencedColumnName = "uuid", nullable = false)
+    @OneToOne
+    private Visit patientVisit;
+
+    private String sleepIssues;
+    private String recentCalmness;
+    private String suicidalThoughts;
+    private String recentActivityChallenge;
+    private String substanceAbuse;
+    private boolean referred;
+    private LocalDate encounterDate;
+    private String screenedBy;
 
     @Override
     public boolean isNew() {

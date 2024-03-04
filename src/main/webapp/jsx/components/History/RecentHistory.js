@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect, useContext } from "react";
+import React, { Fragment, useState, useEffect, useContext, useRef } from "react";
 // BS
 import { Dropdown,} from "react-bootstrap";
 /// Scroll
@@ -17,14 +17,15 @@ import PatientContext from "./../../context/patient/PatientContext";
 import CreateUpdateMHPSS from "./../Mhpss/pages/CreateUpdateMHPSS";
 import RecentActivities from "./../RecentActivities";
 import {GetPatientRecentActivities} from "./../../context/patient/PatientAction";
+import ScreeningConfirmations from "../Mhpss/pages/ScreeningConfirmations";
+import ScreeningContext from "../../context/mhpss/ScreeningContext";
+import ConfirmationContext from "../../context/mhpss/ConfirmationContext";
 
 const RecentHistory = () => {
-  const {patientObject, activeContent, dispatch} = useContext(PatientContext);
+  const {patientObject, activeContent, dispatch} = useContext(PatientContext);;
   useEffect(() => {
     GetPatientRecentActivities({dispatch, patientObject});
   }, [patientObject.personUuid]);
-
-
 
   return (
     <Fragment>
@@ -34,7 +35,7 @@ const RecentHistory = () => {
         <div className="col-xl-3 col-xxl-3 col-lg-3">
             <RecentActivities />
         </div>
-        <div className="col-xl-7 col-xxl-7 col-lg-7">
+        <div className="col-xl-6 col-xxl-6 col-lg-6">
             <div className="card">
                 <div className="card-header border-0  pb-2" style={{backgroundColor:"#EEEEEE"}}>
                     <h4 className="card-title">Screening</h4>
@@ -44,8 +45,8 @@ const RecentHistory = () => {
                 </div>
             </div>
         </div>
-        <div className="col-xl-2 col-xxl-2 col-lg-2">
-            <RecentActivities />
+        <div className="col-xl-3 col-xxl-3 col-lg-3">
+            <ScreeningConfirmations />
         </div>
       </div>
     <div className="col-xl-2 col-xxl-2 col-lg-2"></div>

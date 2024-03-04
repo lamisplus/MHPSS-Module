@@ -9,7 +9,6 @@ import org.lamisplus.modules.mhpss.domain.entity.MhpssClient;
 import org.lamisplus.modules.mhpss.domain.entity.MhpssScreening;
 import org.lamisplus.modules.mhpss.service.MhpssScreeningService;
 import org.lamisplus.modules.mhpss.service.impl.PatientActivityServiceImpl;
-import org.lamisplus.modules.mhpss.service.impl.MhpssScreeningServiceImpl;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,12 +24,25 @@ public class MhpssScreeningController {
     private final PatientActivityServiceImpl patientActivityServiceImpl;
     private final String MHPSS_URL_VERSION_ONE = "/api/v1/mhpss-screening";
 
+
+    @PostMapping(MHPSS_URL_VERSION_ONE)
+    @ApiOperation("Save MHPSS Screening")
+    public ResponseEntity<ScreeningResponseDto> create(@RequestBody ScreeningRequestDto mhpss){
+        return new ResponseEntity<>(mhpssScreeningService.create(mhpss), HttpStatus.CREATED);
+    }
+
+    @PutMapping(MHPSS_URL_VERSION_ONE)
+    @ApiOperation("Update MHPSS Screening")
+    public ResponseEntity<ScreeningResponseDto> update(@RequestBody ScreeningRequestDto mhpss){
+        return new ResponseEntity<>(mhpssScreeningService.update(mhpss), HttpStatus.OK);
+    }
+
     @GetMapping(MHPSS_URL_VERSION_ONE + "/persons")
     @ApiOperation("Get Persons with optimized api")
     public ResponseEntity<PageDTO> getAllPersons(@RequestParam (required = false, defaultValue = "*")  String searchValue,
                                                 @RequestParam (required = false, defaultValue = "20")int pageSize,
                                                 @RequestParam (required = false, defaultValue = "0") int pageNo) {
-        Page<MhpssClient> page = mhpssScreeningService.findAllPrepPersonPage(searchValue, pageNo, pageSize);
+        Page<MhpssClient> page = mhpssScreeningService.findAllPersonPage(searchValue, pageNo, pageSize);
         Log.info(page);
         return new ResponseEntity<>(PaginationUtil.generatePagination(page, page.getContent()), HttpStatus.OK);
     }
@@ -49,8 +61,13 @@ public class MhpssScreeningController {
 
     @GetMapping(MHPSS_URL_VERSION_ONE + "/{id}")
     @ApiOperation("Get MHPSS by ID")
-    public ResponseEntity<MhpssScreening> getMhpss(String id){
+    public ResponseEntity<ScreeningResponseDto> getMhpss(@PathVariable String id){
         return new ResponseEntity<>(mhpssScreeningService.getMhpss(id), HttpStatus.OK);
     }
 
+    @DeleteMapping(MHPSS_URL_VERSION_ONE + "/{id}")
+    public ResponseEntity<?> delete(@PathVariable("id") String id){
+        mhpssScreeningService.delete(id);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

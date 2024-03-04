@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext } from "react";
 // BS
 import { Dropdown,} from "react-bootstrap";
 /// Scroll
@@ -12,68 +12,80 @@ import Typography from '@material-ui/core/Typography';
 import {  Modal } from "react-bootstrap";
 import {Button } from 'semantic-ui-react'
 import PatientContext from "./../context/patient/PatientContext";
+import ScreeningContext from "./../context/mhpss/ScreeningContext";
+import ConfirmationContext from "./../context/mhpss/ConfirmationContext";
 import {GetPatientRecentActivities} from "./../context/patient/PatientAction";
+import {GetScreening, deleteScreening} from "./../context/mhpss/ScreeningAction";
+import {GetConfirmations} from "./../context/mhpss/ConfirmationAction";
 
 
 
 const RecentActivities = () => {
     const [activeAccordionHeaderShadow,setActiveAccordionHeaderShadow] = useState(0);
     const {recentActivities, activeContent, open, record, saving, patientObject, dispatch} = useContext(PatientContext);
-      const toggle = () => dispatch({type: 'SET_OPEN', payload: !open});
+    const {screening, dispatch: screeningDispatch} = useContext(ScreeningContext);
+    const {dispatch: confirmationDispatch} = useContext(ConfirmationContext);
+    const toggle = () => dispatch({type: 'SET_OPEN', payload: !open});
 
     const ActivityName =(name)=> {
         if(name==='MHPSS Screening'){
-          return "MHPSS"
+          return "MH"
         }else {
-          return "Unknown"
+          return "N/A"
         }
-      }
+    }
 
-      const LoadViewPage =(row,action)=>{
-        //Load MHPSS Data
-      }
+    const LoadViewPage = (row,action) => {
+        //populate form
+        GetScreening(screeningDispatch, row.id, action);
+        GetConfirmations(confirmationDispatch, row.id);
 
-      const LoadModal =(row)=>{
-          toggle()
-          dispatch({type: 'SET_RECORD', payload: row});
-      }
+    }
 
-      const LoadDeletePage =(row)=>{
+    const LoadModal =(row)=>{
+        toggle()
+        dispatch({type: 'SET_RECORD', payload: row});
+    }
+
+    const LoadDeletePage =(row)=>{
         if(record.path==='mhpss-screening'){
             dispatch({type: 'SET_SAVING', payload: true});
             //props.setActiveContent({...props.activeContent, route:'mental-health-view', id:row.id})
-            axios
-            .delete(`${baseUrl}mhpss-screening/${record.id}`,
-                { headers: {"Authorization" : `Bearer ${token}`} }
-            )
-            .then((response) => {
-                dispatch({type: 'SET_SAVING', payload: false});
-                toast.success("Record Deleted Successfully");
-                GetPatientRecentActivities({dispatch, patientObject})
-                toggle()
-            })
-            .catch((error) => {
-                dispatch({type: 'SET_SAVING', payload: false});
-                if(error.response && error.response.data){
-                    let errorMessage = error.response.data.apierror && error.response.data.apierror.message!=="" ? error.response.data.apierror.message :  "Something went wrong, please try again";
-                    toast.error(errorMessage);
-                  }
-                  else{
-                    toast.error("Something wen0t wrong. Please try again...");
-                  }
+            const id = record.id;
+            deleteScreening({id}).then(response => {      
+                if(response !== undefined && response !== null){
+                    if(response.status === 200){
+                        toast.success('Record deleted successfully', {position: toast.POSITION.TOP_RIGHT});
+                        GetPatientRecentActivities({dispatch, patientObject})
+                        dispatch({type: 'SET_SAVING', payload: false});
+                        toggle();
+                    }
+                    else{
+                        toast.error("Could delete screening!", {position: toast.POSITION.TOP_RIGHT});
+                        dispatch({type: 'SET_SAVING', payload: false});
+                        toggle()
+                    }
+                    
+                }else{
+                    toast.error("Error deleting screening", {position: toast.POSITION.TOP_RIGHT});
+                    dispatch({type: 'SET_SAVING', payload: false});
+                    toggle()
+                }
             });
-          }
-      }
+        }        
+          
+    
+    }
 
     return (
         <>
             <div className="card">
                 <div className="card-header  border-0 pb-0" >
-                  <h4 className="card-title"> Recent Activities</h4>
+                  <h4 className="card-title">Patient Screening</h4>
                 </div>
                 <div className="card-body">
                     <PerfectScrollbar
-                        style={{ height: "370px" }}
+                        style={{ height: "450px" }}
                         id="DZ_W_Todo1"
                         className="widget-media dz-scroll ps ps--active-y"
                     >
@@ -144,7 +156,7 @@ const RecentActivities = () => {
                                                                     <Dropdown.Menu className="dropdown-menu">
                                                                         <Dropdown.Item
                                                                             className="dropdown-item"
-                                                                            onClick={()=>LoadViewPage(activity,'view')}
+                                                                            onClick={()=>LoadViewPage(activity, 'view')}
                                                                         >
                                                                             View
                                                                         </Dropdown.Item>
@@ -187,7 +199,7 @@ const RecentActivities = () => {
             >
                 <Modal.Header >
                     <Modal.Title id="contained-modal-title-vcenter">
-                        Notification!
+                        Delete Notification!
                     </Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
