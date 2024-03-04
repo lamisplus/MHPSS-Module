@@ -171,6 +171,7 @@ public class MhpssScreeningServiceImpl implements MhpssScreeningService {
         existingMhpssScreening.setSuicidalThoughts(requestDto.getSuicidalThoughts());
         existingMhpssScreening.setEncounterDate(requestDto.getEncounterDate());
         existingMhpssScreening.setUpdatedBy(SecurityUtils.getCurrentUserLogin ().orElse (""));
+        existingMhpssScreening.setScreenedBy(requestDto.getScreenedBy());
         //if it was previously referred and now not with the update, the confirmation will be deleted
         boolean shouldRefer = shouldRefer(requestDto);
         if(existingMhpssScreening.isReferred() && !shouldRefer){
