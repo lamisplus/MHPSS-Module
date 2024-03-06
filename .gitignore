@@ -34,7 +34,8 @@ application-debug.log
 /nbdist/
 /.nb-gradle/
 build/
-src/main/resources/views/static/mhpss/
+src/main/resources/views/static/mhpss/*
+src/main/webapp/api.js
 !**/src/main/**/build/
 !**/src/test/**/build/
 
