@@ -19,14 +19,17 @@ export const calculateAge = dob => {
 
 
 export const GetPatientRecentActivities =({dispatch, patientObject})=>{
+    dispatch({type: 'SET_RECENT_ACTIVITIES_LOADING', payload: true});
    axios
       .get(`${baseUrl}mhpss-screening/activities/patients/${patientObject.personUuid}?full=true`,
           { headers: {"Authorization" : `Bearer ${token}`} }
       )
       .then((response) => {
            dispatch({type: 'SET_RECENT_ACTIVITIES', payload: response.data});
+           dispatch({type: 'SET_RECENT_ACTIVITIES_LOADING', payload: false});
       })
       .catch((error) => {
+        dispatch({type: 'SET_RECENT_ACTIVITIES_LOADING', payload: false});
       });
 
  };

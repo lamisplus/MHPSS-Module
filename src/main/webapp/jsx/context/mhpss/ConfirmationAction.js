@@ -2,14 +2,17 @@ import { url as baseUrl, token } from "../../../api";
 import axios from "axios";
 
 export const GetConfirmations =(confirmationDispatch, screeningId)=>{
+    confirmationDispatch({type: 'SET_CONFIRMATIONS_LOADING', payload: true});
    axios
       .get(`${baseUrl}mhpss-confirmation/screening/${screeningId}`,
           { headers: {"Authorization" : `Bearer ${token}`} }
       )
       .then((response) => {
            confirmationDispatch({type: 'SET_CONFIRMATIONS', payload: response.data});
+           confirmationDispatch({type: 'SET_CONFIRMATIONS_LOADING', payload: false});
       })
       .catch((error) => {
+        confirmationDispatch({type: 'SET_CONFIRMATIONS_LOADING', payload: false});
       });
 
  };
@@ -66,7 +69,7 @@ export const validationConfirmationMeasures = ({values}) => {
 }
 
 
-export const deleteConfirmation = async ({ id }) => {
+export const deleteConfirmation = async ( id ) => {
      console.log("ID: " + id);
      try{
          const response = await axios.delete(`${baseUrl}mhpss-confirmation/${id}`,

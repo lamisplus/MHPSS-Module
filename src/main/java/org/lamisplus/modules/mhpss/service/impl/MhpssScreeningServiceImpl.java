@@ -3,6 +3,7 @@ package org.lamisplus.modules.mhpss.service.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.lamisplus.modules.base.controller.apierror.EntityNotFoundException;
+import org.lamisplus.modules.mhpss.repository.MhpssConfirmationRepository;
 import org.lamisplus.modules.mhpss.service.MhpssConfirmationService;
 import org.lamisplus.modules.mhpss.service.MhpssScreeningService;
 import org.lamisplus.modules.mhpss.service.utility.CommonLogic;
@@ -19,9 +20,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import javax.transaction.Transactional;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
 import static org.lamisplus.modules.base.util.Constants.ArchiveStatus.UN_ARCHIVED;
@@ -37,7 +35,7 @@ public class MhpssScreeningServiceImpl implements MhpssScreeningService {
     private final PersonService personService;
     private final VisitService visitService;
     private final CommonLogic commonLogic;
-    private MhpssConfirmationService confirmationService;
+    private final MhpssConfirmationRepository mhpssConfirmationRepository;
 
     @Override
     public Person getPerson(Long personId) {
@@ -157,8 +155,9 @@ public class MhpssScreeningServiceImpl implements MhpssScreeningService {
 
     @Override
     public ScreeningResponseDto update(ScreeningRequestDto requestDto) {
+
         personService.findPersonByUuid(requestDto.getPersonUuid()).
-                orElseThrow(()->new EntityNotFoundException(Person.class, "id", requestDto.getPersonUuid()));
+                orElseThrow(() -> new EntityNotFoundException(Person.class, "id", requestDto.getPersonUuid()));
 
         MhpssScreening existingMhpssScreening = mhpssScreeningRepository.findById(requestDto.getId())
                 .orElseThrow(() -> new EntityNotFoundException(MhpssScreening.class, "id", requestDto.getId()));
@@ -170,13 +169,14 @@ public class MhpssScreeningServiceImpl implements MhpssScreeningService {
         existingMhpssScreening.setSubstanceAbuse(requestDto.getSubstanceAbuse());
         existingMhpssScreening.setSuicidalThoughts(requestDto.getSuicidalThoughts());
         existingMhpssScreening.setEncounterDate(requestDto.getEncounterDate());
-        existingMhpssScreening.setUpdatedBy(SecurityUtils.getCurrentUserLogin ().orElse (""));
+        existingMhpssScreening.setUpdatedBy(SecurityUtils.getCurrentUserLogin().orElse(""));
         existingMhpssScreening.setScreenedBy(requestDto.getScreenedBy());
         //if it was previously referred and now not with the update, the confirmation will be deleted
         boolean shouldRefer = shouldRefer(requestDto);
-        if(existingMhpssScreening.isReferred() && !shouldRefer){
-            List<MhpssConfirmation> confirmations = confirmationService.getConfirmationsByScreening(existingMhpssScreening.getId());
-            confirmationService.deleteConfirmations(confirmations);
+        if (existingMhpssScreening.isReferred() && !shouldRefer) {
+
+            List<MhpssConfirmation> confirmations = mhpssConfirmationRepository.findByMhpssScreeningOrderByEncounterDateDesc(existingMhpssScreening);
+            mhpssConfirmationRepository.deleteAll(confirmations);
         }
         existingMhpssScreening.setReferred(shouldRefer);
 
@@ -186,8 +186,7 @@ public class MhpssScreeningServiceImpl implements MhpssScreeningService {
     @Override
     public void delete(String id) {
         log.info("Deleting MHPSS {}", id);
-        mhpssScreeningRepository.findById(id)
-                .orElseThrow(()->new EntityNotFoundException(MhpssScreening.class, "id", id));
+        findById(id).orElseThrow(()->new EntityNotFoundException(MhpssScreening.class, "id", id));
 
         mhpssScreeningRepository.deleteById(id);
 

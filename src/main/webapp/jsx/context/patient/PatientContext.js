@@ -10,7 +10,8 @@ export const PatientProvider = ({children}) => {
         recentActivities: [],
         record: null,
         saving: false,
-        open: false
+        open: false,
+        recentActivitiesLoading: false
     }
 
     const [state, dispatch] = useReducer(patientReducer, initialState);

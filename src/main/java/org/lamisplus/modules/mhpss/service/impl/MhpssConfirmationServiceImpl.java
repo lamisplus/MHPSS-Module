@@ -15,10 +15,8 @@ import org.lamisplus.modules.patient.domain.entity.Person;
 import org.lamisplus.modules.patient.domain.entity.Visit;
 import org.lamisplus.modules.patient.service.VisitService;
 import org.lamisplus.modules.patient.utility.SecurityUtils;
-import org.postgresql.shaded.com.ongres.scram.common.ScramAttributes;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
@@ -81,8 +79,8 @@ public class MhpssConfirmationServiceImpl implements MhpssConfirmationService {
         MhpssConfirmation existingConfirmation = mhpssConfirmationRepository.findById(confirmationRequestDto.getId())
                 .orElseThrow(() -> new EntityNotFoundException(MhpssConfirmation.class, "id", confirmationRequestDto.getId()));
 
-        MhpssScreening mhpssScreening = mhpssScreeningService.findById(confirmationRequestDto.getScreeningId())
-                .orElseThrow(() -> new EntityNotFoundException(ScramAttributes.class, "id", confirmationRequestDto.getScreeningId()));
+        mhpssScreeningService.findById(confirmationRequestDto.getScreeningId())
+                .orElseThrow(() -> new EntityNotFoundException(MhpssScreening.class, "id", confirmationRequestDto.getScreeningId()));
 
         //TODO: Use Model mapper for this
         existingConfirmation.setEncounterDate(confirmationRequestDto.getEncounterDate());

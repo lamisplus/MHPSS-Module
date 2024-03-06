@@ -1,6 +1,5 @@
 package org.lamisplus.modules.mhpss.service;
 
-import jdk.nashorn.internal.runtime.regexp.joni.encoding.ObjPtr;
 import org.lamisplus.modules.mhpss.domain.dto.PatientActivity;
 import org.lamisplus.modules.mhpss.domain.dto.ScreeningRequestDto;
 import org.lamisplus.modules.mhpss.domain.dto.ScreeningResponseDto;

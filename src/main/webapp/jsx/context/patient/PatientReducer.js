@@ -33,6 +33,12 @@ const patientReducer = (state, action) => {
                 saving: action.payload,
             }
 
+        case 'SET_RECENT_ACTIVITIES_LOADING':
+            return {
+                ...state,
+                recentActivitiesLoading: action.payload,
+            }
+
         default:
             return state
     }

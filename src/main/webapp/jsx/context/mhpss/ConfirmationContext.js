@@ -23,7 +23,8 @@ export const ConfirmationProvider = ({children}) => {
             clinicianName: '',
             encounterDate: ''
         },
-        action: ''
+        action: '',
+        confirmationsLoading: false
     }
 
     const [state, dispatch] = useReducer(confirmationReducer, initialState);

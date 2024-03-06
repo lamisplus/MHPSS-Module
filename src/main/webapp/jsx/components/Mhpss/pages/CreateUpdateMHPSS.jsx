@@ -21,6 +21,8 @@ import DateTimePicker from './../../FormsUI/DateTimePicker';
 import { GetPatientRecentActivities } from '../../../context/patient/PatientAction';
 import ButtonWrapper from './../../FormsUI/Button';
 import TextfieldWrapper from '../../FormsUI/TextField';
+import { GetConfirmations } from '../../../context/mhpss/ConfirmationAction';
+import ConfirmationContext from '../../../context/mhpss/ConfirmationContext';
 
 function CreateUpdateMHPSS(){
 
@@ -28,9 +30,11 @@ function CreateUpdateMHPSS(){
     const defaultScreening ={sleepIssues: '', recentCalmness: '', suicidalThoughts: '', substanceAbuse: '', recentActivityChallenge: '', encounterDate: ''};
 
     const {screening, dispatch: screeningDispatch} = useContext(ScreeningContext);
+    const {dispatch: confirmationDispatch} = useContext(ConfirmationContext);
     const {patientObject, recentActivities, dispatch} = useContext(PatientContext);
     const [initialFormValues, setInitialFormValues] = useState(screening);
     const [loading, setLoading] = useState(false);
+    const [toUpdate, setToUpdate] = useState(false);
 
     useEffect(() => {
         setInitialFormValues(screening);
@@ -101,20 +105,27 @@ function CreateUpdateMHPSS(){
                             })}
                             onSubmit={(values, actions) => {
                                 setLoading(true);
-                                console.log(screening.action)
                                 values.personUuid = patientObject.personUuid;
                                 if(screening.action === 'update'){
                                     if(!wouldRefer(values) && screening.referred){
-                                        //TODO: Show warning message
+                                        const continueUpdate = window.confirm('Client will no longer be referred. All confirmations linked to this screening will be deleted. Proceed?');
+                                        if(!continueUpdate){
+                                            setLoading(false);
+                                            return;
+                                        }
                                     }
                                     
                                     values.id = screening.id;
                                     updateScreening({values}).then(response => {
+                                        console.log(values)
                                         if(response !== undefined && response !== null){
                                             if(response.status === 200){
                                                 const display = response.data.referred ? 'Record Updated Successfully. Client has been referred for confirmaton' : 'Record updated successfully. Client is not referred for confirmation';
                                                 toast.success(display, {position: toast.POSITION.TOP_CENTER});
-                                                GetPatientRecentActivities({dispatch, patientObject})
+                                                // GetPatientRecentActivities({dispatch, patientObject});
+                                                GetConfirmations(confirmationDispatch, response.data.id);
+                                                response.data.action = 'update';
+                                                screeningDispatch({type: 'SET_SCREENING', payload: response.data});
                                                 setLoading(false);
                                             }
                                             else{
@@ -136,7 +147,9 @@ function CreateUpdateMHPSS(){
                                                 const display = response.data.referred ? 'Record Saved Successfully. Client has been referred for confirmaton' : 'Record saved successfully. Client is not referred for confirmation';
                                                 actions.resetForm();
                                                 toast.success(display, {position: toast.POSITION.TOP_CENTER});
-                                                GetPatientRecentActivities({dispatch, patientObject})
+                                                GetPatientRecentActivities({dispatch, patientObject});
+                                                response.data.action = 'view';
+                                                screeningDispatch({type: 'SET_SCREENING', payload: response.data});
                                                 setLoading(false);
                                             }
                                             else{
@@ -283,6 +296,8 @@ function CreateUpdateMHPSS(){
                     </div>
                 </Container>
         </Grid>
+
+
     </>
     )
 }

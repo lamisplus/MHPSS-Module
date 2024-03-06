@@ -9,6 +9,7 @@ import com.vladmihalcea.hibernate.type.json.JsonNodeStringType;
 import com.vladmihalcea.hibernate.type.json.JsonStringType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.*;
 import org.lamisplus.modules.base.domain.entities.Audit;
 import org.lamisplus.modules.patient.domain.entity.Person;
@@ -22,15 +23,16 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 
 @Entity
 @Data
-@EqualsAndHashCode(callSuper = false)
 @Table(name = "mhpss_screening")
 @SQLDelete(sql = "UPDATE mhpss_screening SET archived = true WHERE id=?", check = ResultCheckStyle.COUNT)
 @Where(clause = "archived = false")
+@NoArgsConstructor
 @TypeDefs({
         @TypeDef(name = "string-array", typeClass = StringArrayType.class),
         @TypeDef(name = "int-array", typeClass = IntArrayType.class),
@@ -70,7 +72,7 @@ public class MhpssScreening implements Serializable, Persistable<String> {
 
     @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "mhpssScreening")
     @JsonIgnore
-    private Set<MhpssConfirmation> mhpssConfirmation;
+    private List<MhpssConfirmation> mhpssConfirmation;
 
     @JoinColumn(name = "patient_visit_id", referencedColumnName = "uuid", nullable = false)
     @OneToOne

@@ -8,6 +8,7 @@ import com.vladmihalcea.hibernate.type.json.JsonNodeStringType;
 import com.vladmihalcea.hibernate.type.json.JsonStringType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.hibernate.annotations.*;
 import org.lamisplus.modules.base.domain.entities.Audit;
@@ -26,10 +27,10 @@ import java.util.List;
 
 @Entity
 @Data
-@EqualsAndHashCode(callSuper = false)
 @Table(name = "mhpss_confirmation")
 @SQLDelete(sql = "UPDATE mhpss_confirmation SET archived = true WHERE id=?", check = ResultCheckStyle.COUNT)
 @Where(clause = "archived = false")
+@NoArgsConstructor
 @TypeDefs({
         @TypeDef(name = "string-array", typeClass = StringArrayType.class),
         @TypeDef(name = "int-array", typeClass = IntArrayType.class),

@@ -33,6 +33,7 @@ import momentLocalizer from "react-widgets-moment";
 import moment from "moment";
 import ScreeningContext from '../../context/mhpss/ScreeningContext';
 import ConfirmationContext from '../../context/mhpss/ConfirmationContext';
+import PatientContext from '../../context/patient/PatientContext';
 //Dtate Picker package
 Moment.locale("en");
 momentLocalizer();
@@ -59,18 +60,20 @@ ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />)
 
 
 const Patients = (props) => {    
+    console.log('Component lis');
     const [patientList, setPatientList] = useState([])
     const [loading, setLoading] = useState(true)
     const [showPPI, setShowPPI] = useState(true)
     const {screening, dispatch: screeningDispatch} = useContext(ScreeningContext);
     const {confirmation, confirmations, dispatch: confirmationDispatch} = useContext(ConfirmationContext)
+    const {patientObj} = useContext(PatientContext);
 
     useEffect(() => {
         screeningDispatch({type: 'RESET_SCREENING'});
         confirmationDispatch({type: 'RESET_CONFIRMATIONS'});
         confirmationDispatch({type: 'RESET_CONFIRMATION'});
-        patients()
-      }, []);
+        //patients()
+      }, [screeningDispatch,confirmationDispatch]);
         ///GET LIST OF Patients
         async function patients() {
             setLoading(true)

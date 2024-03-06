@@ -46,6 +46,12 @@ const confirmationReducer = (state, action) => {
                 },
             }
 
+        case 'SET_CONFIRMATIONS_LOADING':
+            return {
+                ...state,
+                confirmationsLoading: action.payload,
+            }
+
         default:
             return state
     }

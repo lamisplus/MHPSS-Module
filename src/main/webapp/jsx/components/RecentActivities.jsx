@@ -34,6 +34,7 @@ const RecentActivities = () => {
           return "N/A"
         }
     }
+    
 
     const LoadViewPage = (row,action) => {
         //populate form

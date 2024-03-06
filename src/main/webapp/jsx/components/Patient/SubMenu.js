@@ -22,8 +22,8 @@ function SubMenu() {
 
              <Menu size="large" color={"black"} inverted >
                  (<>
-                     <Menu.Item onClick={() => onClickHome()} >Home</Menu.Item>
-//                     <Menu.Item onClick={() => loadPatientHistory()} >History</Menu.Item>
+                    <Menu.Item onClick={() => onClickHome()} >Home</Menu.Item>
+                    <Menu.Item>Analytics</Menu.Item>
                  </>)
              </Menu>
 

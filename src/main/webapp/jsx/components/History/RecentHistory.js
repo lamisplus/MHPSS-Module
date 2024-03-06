@@ -1,31 +1,31 @@
-import React, { Fragment, useState, useEffect, useContext, useRef } from "react";
+import React, { Fragment, useEffect, useContext } from "react";
 // BS
-import { Dropdown,} from "react-bootstrap";
 /// Scroll
-import { makeStyles } from '@material-ui/core/styles';
-import PerfectScrollbar from "react-perfect-scrollbar";
 //import { Link } from "react-router-dom";
-import axios from "axios";
-import { url as baseUrl, token } from "../../../api";
 //import { Alert } from "react-bootstrap";
-import {  Card,Accordion } from "react-bootstrap";
-import {  Modal } from "react-bootstrap";
 import "react-widgets/dist/css/react-widgets.css";
-import { toast} from "react-toastify";
-import {Button } from 'semantic-ui-react'
 import PatientContext from "./../../context/patient/PatientContext";
 import CreateUpdateMHPSS from "./../Mhpss/pages/CreateUpdateMHPSS";
 import RecentActivities from "./../RecentActivities";
 import {GetPatientRecentActivities} from "./../../context/patient/PatientAction";
 import ScreeningConfirmations from "../Mhpss/pages/ScreeningConfirmations";
-import ScreeningContext from "../../context/mhpss/ScreeningContext";
+import Spinner from "../Spinner";
 import ConfirmationContext from "../../context/mhpss/ConfirmationContext";
 
 const RecentHistory = () => {
-  const {patientObject, activeContent, dispatch} = useContext(PatientContext);;
+  console.log('called');
+  const {patientObject, activeContent, recentActivitiesLoading, dispatch} = useContext(PatientContext);
+  const{confirmationsLoading} = useContext(ConfirmationContext);
+  
   useEffect(() => {
-    GetPatientRecentActivities({dispatch, patientObject});
-  }, [patientObject.personUuid]);
+    const fetchData = async () => {
+      GetPatientRecentActivities({ dispatch, patientObject });
+      console.log(patientObject.personUuid);
+    };
+  
+    fetchData();
+  }, [patientObject]);
+  
 
   return (
     <Fragment>
@@ -33,7 +33,13 @@ const RecentHistory = () => {
      
       <div className="row">
         <div className="col-xl-3 col-xxl-3 col-lg-3">
-            <RecentActivities />
+            {recentActivitiesLoading ? (
+                <Spinner />
+              )
+              :
+              (<RecentActivities />)
+            }
+            
         </div>
         <div className="col-xl-6 col-xxl-6 col-lg-6">
             <div className="card">
@@ -46,7 +52,12 @@ const RecentHistory = () => {
             </div>
         </div>
         <div className="col-xl-3 col-xxl-3 col-lg-3">
-            <ScreeningConfirmations />
+          {confirmationsLoading ? (
+                <Spinner />
+              )
+              :
+            (<ScreeningConfirmations />)
+          }
         </div>
       </div>
     <div className="col-xl-2 col-xxl-2 col-lg-2"></div>
