@@ -25,7 +25,7 @@ export const createScreening = async ({ values }) => {
          return response;
      }
      catch(error){
-         return null;
+         throw error;
      }
          
 }
@@ -39,7 +39,7 @@ export const updateScreening = async ({ values }) => {
          return response;
      }
      catch(error){
-         return null;
+         throw error;
      }
          
 }
@@ -76,18 +76,22 @@ export const createActivityObject = (mhpssScreening) =>{
 }
 
 export const wouldRefer = (values) => {
+     var countYes = 0;
      if (values.suicidalThoughts.toLowerCase() === 'yes') {
          return true;
+     }
+
+     if(values.recentCalmness.toLowerCase() === 'no'){
+          countYes = countYes + 1;
      }
  
      const fieldsToCheck = [
           values.substanceAbuse,
-          values.recentCalmness,
           values.sleepIssues,
           values.recentActivityChallenge
      ];
  
-     const countYes = fieldsToCheck.filter(field => field.toLowerCase() === 'yes').length;
+      countYes = (fieldsToCheck.filter(field => field.toLowerCase() === 'yes').length) + countYes;
  
      return countYes >= 2;
  }

@@ -8,6 +8,7 @@ import org.lamisplus.modules.mhpss.domain.entity.MhpssScreening;
 import org.lamisplus.modules.patient.domain.entity.Person;
 import org.springframework.data.domain.Page;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,7 +16,7 @@ public interface MhpssScreeningService {
     Person getPerson(Long personId);
 
 
-    Page<Person> findPrepPersonPage(String searchValue, int pageNo, int pageSize);
+    Page<Person> findMhpssPersonPage(String searchValue, int pageNo, int pageSize);
 
     Page<MhpssClient> findAllPersonPage(String searchValue, int pageNo, int pageSize);
 
@@ -31,4 +32,8 @@ public interface MhpssScreeningService {
     void delete(String id);
 
     Optional <MhpssScreening> findById(String id);
+
+    boolean encounterDateExists(Person person, LocalDate encounterDate);
+
+    boolean encounterDateExistsForUpdate(String personId, LocalDate encounterDate, String id);
 }

@@ -15,6 +15,7 @@ const useStyles = makeStyles((theme) => ({
 
 const DateTimePicker = ({
   name,
+  shouldDisableDate,
   ...otherProps
 }) => {
   const [field, meta] = useField(name);
@@ -30,8 +31,11 @@ const DateTimePicker = ({
     inputProps: {
       max: otherProps.maxDate != undefined ? otherProps.maxDate.toISOString().split('T')[0] : new Date(),
       min: otherProps.minDate != undefined ? otherProps.minDate.toISOString().split('T')[0] : new Date(2000, 0, 1),  // Format maxDate for input
-    }
+    },
+    shouldDisableDate: shouldDisableDate
+
   };
+
 
   if(meta && meta.touched && meta.error) {
     configDateTimePicker.error = true;

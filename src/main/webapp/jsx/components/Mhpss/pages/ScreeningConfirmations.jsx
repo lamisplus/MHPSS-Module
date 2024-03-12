@@ -281,42 +281,61 @@ const ScreeningConfirmations = () => {
                                         }
                                         setConfirmationMeasureError("");
                                         if(action === 'save'){
-                                            createConfirmation({values}).then(response => {                                    
-                                                if(response !== undefined && response !== null){
-                                                    if(response.status === 201){
-                                                        actions.resetForm();
-                                                        setOpenDialog(false);
-                                                        GetConfirmations(confirmationDispatch, response.data.screeningId);
-                                                        toast.success('Confirmation saved successfully', {position: toast.POSITION.TOP_CENTER});
+                                            try{
+                                                createConfirmation({values}).then(response => {                                    
+                                                    if(response !== undefined && response !== null){
+                                                        if(response.status === 201){
+                                                            actions.resetForm();
+                                                            setOpenDialog(false);
+                                                            GetConfirmations(confirmationDispatch, response.data.screeningId);
+                                                            toast.success('Confirmation saved successfully', {position: toast.POSITION.TOP_CENTER});
+                                                            setLoading(false);
+                                                        }
+                                                        else{
+                                                            toast.error("Could Not Save Confirmation!", {position: toast.POSITION.TOP_RIGHT});
+                                                            setLoading(false);
+                                                        }
+                                                        
+                                                    }else{
+                                                        toast.error("Error saving confirmation!", {position: toast.POSITION.TOP_RIGHT});
                                                         setLoading(false);
                                                     }
-                                                    else{
-                                                        toast.error("Could Not Save Confirmation!", {position: toast.POSITION.TOP_RIGHT});
-                                                        setLoading(false);
-                                                    }
-                                                    
-                                                }else{
-                                                    toast.error("Error saving confirmation!", {position: toast.POSITION.TOP_RIGHT});
+                                                })
+                                                .catch(error => {
+                                                    toast.error(error.response.data, { position: toast.POSITION.TOP_RIGHT });
                                                     setLoading(false);
-                                                }
-                                            });
+                                                });
+                                            }catch(error){
+                                                toast.error('Something went wrong', { position: toast.POSITION.TOP_RIGHT });
+                                                setLoading(false);
+                                            }
                                         }else if(action === 'update'){
-                                            updateConfirmation({values}).then(response => {
-                                                if(response !== undefined && response !== null){
-                                                    if(response.status === 200){
-                                                        toast.success('Confirmation updated successfully', {position: toast.POSITION.TOP_CENTER});
+                                            try{
+                                                updateConfirmation({values}).then(response => {
+                                                    if(response !== undefined && response !== null){
+                                                        if(response.status === 200){
+                                                            toast.success('Confirmation updated successfully', {position: toast.POSITION.TOP_CENTER});
+                                                            setLoading(false);
+                                                        }
+                                                        else{
+                                                            toast.error("Could Not Update Confirmation!", {position: toast.POSITION.TOP_RIGHT});
+                                                            setLoading(false);
+                                                        }
+                                                        
+                                                    }else{
+                                                        toast.error("Error updating confirmation!", {position: toast.POSITION.TOP_RIGHT});
                                                         setLoading(false);
                                                     }
-                                                    else{
-                                                        toast.error("Could Not Update Confirmation!", {position: toast.POSITION.TOP_RIGHT});
-                                                        setLoading(false);
-                                                    }
-                                                    
-                                                }else{
-                                                    toast.error("Error updating confirmation!", {position: toast.POSITION.TOP_RIGHT});
+                                                })
+                                                .catch(error => {
+                                                    toast.error(error.response.data, { position: toast.POSITION.TOP_RIGHT });
                                                     setLoading(false);
-                                                }
-                                            })
+                                                });
+                                            }catch(error){
+                                                toast.error(error.response.data, { position: toast.POSITION.TOP_RIGHT });
+                                                console.log(error);
+                                                setLoading(false);
+                                            }
                                         }
                                        
 

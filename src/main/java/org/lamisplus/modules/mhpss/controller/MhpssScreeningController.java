@@ -7,8 +7,10 @@ import org.lamisplus.modules.base.util.PaginationUtil;
 import org.lamisplus.modules.mhpss.domain.dto.*;
 import org.lamisplus.modules.mhpss.domain.entity.MhpssClient;
 import org.lamisplus.modules.mhpss.domain.entity.MhpssScreening;
+import org.lamisplus.modules.mhpss.exception.EncounterDateExistsException;
 import org.lamisplus.modules.mhpss.service.MhpssScreeningService;
 import org.lamisplus.modules.mhpss.service.impl.PatientActivityServiceImpl;
+import org.lamisplus.modules.patient.domain.entity.Encounter;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,14 +29,23 @@ public class MhpssScreeningController {
 
     @PostMapping(MHPSS_URL_VERSION_ONE)
     @ApiOperation("Save MHPSS Screening")
-    public ResponseEntity<ScreeningResponseDto> create(@RequestBody ScreeningRequestDto mhpss){
-        return new ResponseEntity<>(mhpssScreeningService.create(mhpss), HttpStatus.CREATED);
+    public ResponseEntity<?> create(@RequestBody ScreeningRequestDto mhpss){
+        try {
+            return new ResponseEntity<>(mhpssScreeningService.create(mhpss), HttpStatus.CREATED);
+        }catch (EncounterDateExistsException encounterDateExistsException){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(encounterDateExistsException.getMessage());
+        }
+
     }
 
     @PutMapping(MHPSS_URL_VERSION_ONE)
     @ApiOperation("Update MHPSS Screening")
-    public ResponseEntity<ScreeningResponseDto> update(@RequestBody ScreeningRequestDto mhpss){
-        return new ResponseEntity<>(mhpssScreeningService.update(mhpss), HttpStatus.OK);
+    public ResponseEntity<?> update(@RequestBody ScreeningRequestDto mhpss){
+        try {
+            return new ResponseEntity<>(mhpssScreeningService.update(mhpss), HttpStatus.OK);
+        }catch (EncounterDateExistsException encounterDateExistsException){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(encounterDateExistsException.getMessage());
+        }
     }
 
     @GetMapping(MHPSS_URL_VERSION_ONE + "/persons")

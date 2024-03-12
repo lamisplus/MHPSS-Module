@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.lamisplus.modules.mhpss.domain.dto.*;
 import org.lamisplus.modules.mhpss.domain.entity.MhpssConfirmation;
+import org.lamisplus.modules.mhpss.exception.EncounterDateExistsException;
 import org.lamisplus.modules.mhpss.service.MhpssConfirmationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,8 +26,12 @@ public class MhpssConfirmationController {
 
     @PostMapping(MHPSS_CONFIRMATION_URL_VERSION_ONE)
     @ApiOperation("Save MHPSS Confirmation")
-    public ResponseEntity<ConfirmationResponseDto> create(@RequestBody ConfirmationRequestDto confirmationRequestDto){
-        return new ResponseEntity<>(mhpssConfirmationService.create(confirmationRequestDto), HttpStatus.CREATED);
+    public ResponseEntity<?> create(@RequestBody ConfirmationRequestDto confirmationRequestDto){
+        try {
+            return new ResponseEntity<>(mhpssConfirmationService.create(confirmationRequestDto), HttpStatus.CREATED);
+        }catch (EncounterDateExistsException encounterDateExistsException){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(encounterDateExistsException.getMessage());
+        }
     }
 
     @GetMapping(MHPSS_CONFIRMATION_URL_VERSION_ONE + "/{id}")
@@ -37,8 +42,12 @@ public class MhpssConfirmationController {
 
     @PutMapping(MHPSS_CONFIRMATION_URL_VERSION_ONE)
     @ApiOperation("Update MHPSS Screening")
-    public ResponseEntity<ConfirmationResponseDto> update(@RequestBody ConfirmationRequestDto mhpss){
-        return new ResponseEntity<>(mhpssConfirmationService.update(mhpss), HttpStatus.OK);
+    public ResponseEntity<?> update(@RequestBody ConfirmationRequestDto mhpss){
+        try {
+            return new ResponseEntity<>(mhpssConfirmationService.update(mhpss), HttpStatus.OK);
+        }catch (EncounterDateExistsException encounterDateExistsException){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(encounterDateExistsException.getMessage());
+        }
     }
 
     @DeleteMapping(MHPSS_CONFIRMATION_URL_VERSION_ONE + "/{id}")

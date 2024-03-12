@@ -7,7 +7,6 @@ import com.foreach.across.modules.hibernate.provider.HibernatePackageRegistry;
 import lombok.extern.slf4j.Slf4j;
 import org.lamisplus.modules.mhpss.domain.MhpssDomain;
 import org.lamisplus.modules.patient.domain.PatientDomain;
-import org.lamisplus.modules.triage.domain.TriageDomain;
 
 /**
  * The AcrossHibernateJpaModule sets up a shared EntityManager that multiple modules can use (with Hibernate).
@@ -22,6 +21,6 @@ import org.lamisplus.modules.triage.domain.TriageDomain;
 public class EntityScanConfiguration implements HibernatePackageConfigurer {
     @Override
     public void configureHibernatePackage(HibernatePackageRegistry hibernatePackageRegistry) {
-        hibernatePackageRegistry.addPackageToScan(MhpssDomain.class, PatientDomain.class, TriageDomain.class);
+        hibernatePackageRegistry.addPackageToScan(MhpssDomain.class, PatientDomain.class);
     }
 }

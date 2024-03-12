@@ -7,16 +7,17 @@ import org.lamisplus.modules.mhpss.domain.dto.ConfirmationRequestDto;
 import org.lamisplus.modules.mhpss.domain.dto.ConfirmationResponseDto;
 import org.lamisplus.modules.mhpss.domain.entity.MhpssConfirmation;
 import org.lamisplus.modules.mhpss.domain.entity.MhpssScreening;
+import org.lamisplus.modules.mhpss.exception.EncounterDateExistsException;
 import org.lamisplus.modules.mhpss.repository.MhpssConfirmationRepository;
 import org.lamisplus.modules.mhpss.service.MhpssConfirmationService;
 import org.lamisplus.modules.mhpss.service.MhpssScreeningService;
 import org.lamisplus.modules.mhpss.service.utility.CommonLogic;
-import org.lamisplus.modules.patient.domain.entity.Person;
 import org.lamisplus.modules.patient.domain.entity.Visit;
 import org.lamisplus.modules.patient.service.VisitService;
 import org.lamisplus.modules.patient.utility.SecurityUtils;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
@@ -41,11 +42,13 @@ public class MhpssConfirmationServiceImpl implements MhpssConfirmationService {
 
     @Override
     public ConfirmationResponseDto create(ConfirmationRequestDto confirmationRequestDto) {
-        log.info("Creating MHPSS Confirmation");
 
-        MhpssScreening mhpssScreening = mhpssScreeningService.findById(confirmationRequestDto.getScreeningId()).
-                orElseThrow(()->new EntityNotFoundException(Person.class, "id", confirmationRequestDto
-                        .getScreeningId()));
+        MhpssScreening mhpssScreening = mhpssScreeningService.findById(confirmationRequestDto.getScreeningId())
+                .orElseThrow(() -> new EntityNotFoundException(MhpssScreening.class, "id", confirmationRequestDto.getScreeningId()));
+
+        if(encounterDateExists(confirmationRequestDto.getScreeningId(), confirmationRequestDto.getEncounterDate())){
+            throw new EncounterDateExistsException("Client has an existing encounter date");
+        }
 
         Optional<Visit> existingVisit = visitService.findByVisitStartDateAndPerson(confirmationRequestDto.getEncounterDate().atTime(LocalTime.MIDNIGHT), mhpssScreening.getPerson());
 
@@ -81,6 +84,10 @@ public class MhpssConfirmationServiceImpl implements MhpssConfirmationService {
 
         mhpssScreeningService.findById(confirmationRequestDto.getScreeningId())
                 .orElseThrow(() -> new EntityNotFoundException(MhpssScreening.class, "id", confirmationRequestDto.getScreeningId()));
+
+        if(encounterDateExistsForUpdate(confirmationRequestDto.getScreeningId(), confirmationRequestDto.getEncounterDate(), confirmationRequestDto.getId())){
+            throw new EncounterDateExistsException("Client has an existing encounter date");
+        }
 
         //TODO: Use Model mapper for this
         existingConfirmation.setEncounterDate(confirmationRequestDto.getEncounterDate());
@@ -161,5 +168,20 @@ public class MhpssConfirmationServiceImpl implements MhpssConfirmationService {
 
         log.info("MHPSS Confirmation successfully deleted {}", id);
 
+    }
+
+    @Override
+    public boolean encounterDateExists(String mhpss_screening_id, LocalDate encounterDate) {
+        log.info(mhpss_screening_id + " " + encounterDate);
+        log.info("Count " + mhpssConfirmationRepository.findAllEncounterDateOfPerson(mhpss_screening_id, encounterDate).size());
+
+        return mhpssConfirmationRepository.findAllEncounterDateOfPerson(mhpss_screening_id, encounterDate).size() > 0;
+    }
+
+    @Override
+    public boolean encounterDateExistsForUpdate(String mhpss_screening_id, LocalDate encounterDate, String confirmation_id) {
+        log.info(mhpss_screening_id + " " + encounterDate);
+        log.info("Count " + mhpssConfirmationRepository.findAllEncounterDateOfPersonAndIdNot(mhpss_screening_id, encounterDate, confirmation_id).size());
+        return mhpssConfirmationRepository.findAllEncounterDateOfPersonAndIdNot(mhpss_screening_id, encounterDate, confirmation_id).size() > 0;
     }
 }

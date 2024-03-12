@@ -3,8 +3,8 @@ package org.lamisplus.modules.mhpss.service.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.lamisplus.modules.base.controller.apierror.EntityNotFoundException;
+import org.lamisplus.modules.mhpss.exception.EncounterDateExistsException;
 import org.lamisplus.modules.mhpss.repository.MhpssConfirmationRepository;
-import org.lamisplus.modules.mhpss.service.MhpssConfirmationService;
 import org.lamisplus.modules.mhpss.service.MhpssScreeningService;
 import org.lamisplus.modules.mhpss.service.utility.CommonLogic;
 import org.lamisplus.modules.patient.domain.entity.Person;
@@ -20,6 +20,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.*;
 import static org.lamisplus.modules.base.util.Constants.ArchiveStatus.UN_ARCHIVED;
@@ -44,7 +45,7 @@ public class MhpssScreeningServiceImpl implements MhpssScreeningService {
     }
 
     @Override
-    public Page<Person> findPrepPersonPage(String searchValue, int pageNo, int pageSize) {
+    public Page<Person> findMhpssPersonPage(String searchValue, int pageNo, int pageSize) {
         Long facilityId = currentUserOrganizationServiceImpl.getCurrentUserOrganization();
         Pageable pageable = PageRequest.of(pageNo, pageSize);
         if(!String.valueOf(searchValue).equals("null") && !searchValue.equals("*")){
@@ -88,6 +89,10 @@ public class MhpssScreeningServiceImpl implements MhpssScreeningService {
         log.info("Creating MHPSS Screening");
         Person person = personService.findPersonByUuid(requestDto.getPersonUuid()).
                 orElseThrow(()->new EntityNotFoundException(Person.class, "id", requestDto.getPersonUuid()));
+
+        if(encounterDateExists(person, requestDto.getEncounterDate())){
+            throw new EncounterDateExistsException("Encounter date already exists for client");
+        }
 
         Optional<Visit> existingVisit = visitService.findByVisitStartDateAndPerson(requestDto.getEncounterDate().atTime(LocalTime.MIDNIGHT), person);
 
@@ -137,30 +142,36 @@ public class MhpssScreeningServiceImpl implements MhpssScreeningService {
 
     @Override
     public boolean shouldRefer(ScreeningRequestDto screeningDto){
+        int yesCount = 0;
         if(screeningDto.getSuicidalThoughts().equalsIgnoreCase("yes")){
             return true;
         }
+        if(screeningDto.getRecentCalmness().equalsIgnoreCase("no"))
+            yesCount++;
 
         String[] fieldsToCheck = {
                 screeningDto.getSubstanceAbuse(),
-                screeningDto.getRecentCalmness(),
                 screeningDto.getSleepIssues(),
                 screeningDto.getRecentActivityChallenge()
         };
 
-        return  (int) Arrays.stream(fieldsToCheck)
+        return  (int) (Arrays.stream(fieldsToCheck)
                 .filter("yes"::equalsIgnoreCase)
-                .count() >= 2;
+                .count()) + yesCount >= 2;
     }
 
     @Override
     public ScreeningResponseDto update(ScreeningRequestDto requestDto) {
 
-        personService.findPersonByUuid(requestDto.getPersonUuid()).
+        Person person = personService.findPersonByUuid(requestDto.getPersonUuid()).
                 orElseThrow(() -> new EntityNotFoundException(Person.class, "id", requestDto.getPersonUuid()));
 
         MhpssScreening existingMhpssScreening = mhpssScreeningRepository.findById(requestDto.getId())
                 .orElseThrow(() -> new EntityNotFoundException(MhpssScreening.class, "id", requestDto.getId()));
+
+        if(encounterDateExistsForUpdate(person.getUuid(), requestDto.getEncounterDate(), requestDto.getId())){
+            throw new EncounterDateExistsException("Encounter date already exists for client");
+        }
 
         //TODO: Use Model mapper for this
         existingMhpssScreening.setRecentActivityChallenge(requestDto.getRecentActivityChallenge());
@@ -197,6 +208,16 @@ public class MhpssScreeningServiceImpl implements MhpssScreeningService {
     @Override
     public Optional<MhpssScreening> findById(String id) {
         return mhpssScreeningRepository.findById(id);
+    }
+
+    @Override
+    public boolean encounterDateExists(Person person, LocalDate encounterDate) {
+        return mhpssScreeningRepository.findAllByPersonAndEncounterDate(person, encounterDate).size() > 0;
+    }
+
+    @Override
+    public boolean encounterDateExistsForUpdate(String personId, LocalDate encounterDate, String id) {
+        return mhpssScreeningRepository.findAllByPersonAndEncounterDateAndIdNot(personId, encounterDate, id).size() > 0;
     }
 
 

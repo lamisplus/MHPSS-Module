@@ -27,7 +27,7 @@ export const GetConfirmations =(confirmationDispatch, screeningId)=>{
          return response;
      }
      catch(error){
-         return null;
+         throw error;
      }
          
 }
@@ -55,7 +55,7 @@ export const updateConfirmation = async ({ values }) => {
          return response;
      }
      catch(error){
-         return null;
+         throw error;
      }
          
 }

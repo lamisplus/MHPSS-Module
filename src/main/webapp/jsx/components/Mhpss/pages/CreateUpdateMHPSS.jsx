@@ -36,6 +36,21 @@ function CreateUpdateMHPSS(){
     const [loading, setLoading] = useState(false);
     const [toUpdate, setToUpdate] = useState(false);
 
+    const disabledDates = [
+        new Date(2024, 0, 1),
+        // Add more dates as needed
+    ];
+
+
+    const shouldDisableDate = (date) => {
+    // Check if the date is in the array of disabled dates
+    return disabledDates.some(disabledDate => (
+        disabledDate.getDate() === date.getDate() &&
+        disabledDate.getMonth() === date.getMonth() &&
+        disabledDate.getFullYear() === date.getFullYear()
+    ));
+    };
+
     useEffect(() => {
         setInitialFormValues(screening);
     }, [screening]);
@@ -108,7 +123,7 @@ function CreateUpdateMHPSS(){
                                 values.personUuid = patientObject.personUuid;
                                 if(screening.action === 'update'){
                                     if(!wouldRefer(values) && screening.referred){
-                                        const continueUpdate = window.confirm('Client will no longer be referred. All confirmations linked to this screening will be deleted. Proceed?');
+                                        const continueUpdate = window.confirm('Client will no longer be referred to Psychologist. All confirmations linked to this screening will be deleted. Proceed?');
                                         if(!continueUpdate){
                                             setLoading(false);
                                             return;
@@ -116,11 +131,12 @@ function CreateUpdateMHPSS(){
                                     }
                                     
                                     values.id = screening.id;
+                                    try{
                                     updateScreening({values}).then(response => {
                                         console.log(values)
                                         if(response !== undefined && response !== null){
                                             if(response.status === 200){
-                                                const display = response.data.referred ? 'Record Updated Successfully. Client has been referred for confirmaton' : 'Record updated successfully. Client is not referred for confirmation';
+                                                const display = response.data.referred ? 'Record Updated Successfully. Client has been referred to Psychologist' : 'Record updated successfully. Client is not referred for confirmation';
                                                 toast.success(display, {position: toast.POSITION.TOP_CENTER});
                                                 // GetPatientRecentActivities({dispatch, patientObject});
                                                 GetConfirmations(confirmationDispatch, response.data.id);
@@ -137,31 +153,54 @@ function CreateUpdateMHPSS(){
                                             toast.error("Error Updating Screening!", {position: toast.POSITION.TOP_RIGHT});
                                             setLoading(false);
                                         }
+                                    })
+                                    .catch(error => {
+                                        if (error.response && error.response.status === 400) {
+                                            toast.error(error.response.data, { position: toast.POSITION.TOP_RIGHT });
+                                        } else {
+                                            console.error("Non-response error:", error.message);
+                                        }
+                                        setLoading(false);
                                     });
+                                }catch(error){
+                                    toast.error('Something went wrong', { position: toast.POSITION.TOP_RIGHT });
+                                    console.error("Error outside promise:", error);
+                                    setLoading(false);
+                                }
 
                                 }
                                 else if(screening.action === 'save' || screening.action === ''){
-                                    createScreening({values}).then(response => {                                    
-                                        if(response !== undefined && response !== null){
-                                            if(response.status === 201){
-                                                const display = response.data.referred ? 'Record Saved Successfully. Client has been referred for confirmaton' : 'Record saved successfully. Client is not referred for confirmation';
-                                                actions.resetForm();
-                                                toast.success(display, {position: toast.POSITION.TOP_CENTER});
-                                                GetPatientRecentActivities({dispatch, patientObject});
-                                                response.data.action = 'view';
-                                                screeningDispatch({type: 'SET_SCREENING', payload: response.data});
+                                    try{
+                                        createScreening({values}).then(response => {                                    
+                                            if(response !== undefined && response !== null){
+                                                if(response.status === 201){
+                                                    const display = response.data.referred ? 'Record Saved Successfully. Client has been referred to Psychologist' : 'Record saved successfully. Client is not referred for confirmation';
+                                                    actions.resetForm();
+                                                    toast.success(display, {position: toast.POSITION.TOP_RIGHT});
+                                                    GetPatientRecentActivities({dispatch, patientObject});
+                                                    response.data.action = 'view';
+                                                    screeningDispatch({type: 'SET_SCREENING', payload: response.data});
+                                                    setLoading(false);
+                                                }else{
+                                                    toast.error("Could Not Create Screening!", {position: toast.POSITION.TOP_RIGHT});
+                                                    setLoading(false);
+                                                }
+                                                
+                                            }else{
+                                                toast.error("Error Creating Screening!", {position: toast.POSITION.TOP_RIGHT});
                                                 setLoading(false);
                                             }
-                                            else{
-                                                toast.error("Could Not Save Screening!", {position: toast.POSITION.TOP_RIGHT});
-                                                setLoading(false);
-                                            }
-                                            
-                                        }else{
-                                            toast.error("Error Saving Screening!", {position: toast.POSITION.TOP_RIGHT});
+                                        })
+                                        .catch(error => {
+                                            toast.error(error.response.data, { position: toast.POSITION.TOP_RIGHT });
                                             setLoading(false);
-                                        }
-                                    });
+                                        });;
+                                    }
+                                    catch(error){
+                                            console.error("Error outside promise:", error);
+                                            toast.error('Something went wrong', { position: toast.POSITION.TOP_RIGHT });
+                                            setLoading(false);
+                                    }
                                 }
 
                                 actions.setSubmitting(false);
@@ -179,6 +218,7 @@ function CreateUpdateMHPSS(){
                                                         label="Encounter Date"
                                                         maxDate={new Date()}
                                                         disabled={screening.action === 'view'}
+                                                        shouldDisableDate={shouldDisableDate}
                                                     />
                                                 </Grid>
 
