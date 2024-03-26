@@ -86,6 +86,7 @@ public class MhpssScreening implements Serializable, Persistable<String> {
     private boolean referred;
     private LocalDate encounterDate;
     private String screenedBy;
+    private Long facilityId;
 
     @Override
     public boolean isNew() {

@@ -103,6 +103,7 @@ public class MhpssScreeningServiceImpl implements MhpssScreeningService {
         mhpssScreening.setPatientVisit(visitToSave);
         mhpssScreening.setCreatedBy(SecurityUtils.getCurrentUserLogin ().orElse (""));
         mhpssScreening.setUpdatedBy(SecurityUtils.getCurrentUserLogin ().orElse (""));
+        mhpssScreening.setFacilityId(person.getFacilityId());
         mhpssScreening.setReferred(shouldRefer(requestDto));
         mhpssScreening.setEncounterDate(requestDto.getEncounterDate());
 
@@ -136,6 +137,7 @@ public class MhpssScreeningServiceImpl implements MhpssScreeningService {
         responseDto.setSuicidalThoughts(mhpssScreening.getSuicidalThoughts());
         responseDto.setReferred(mhpssScreening.isReferred());
         responseDto.setScreenedBy(mhpssScreening.getScreenedBy());
+        responseDto.setFacilityId(mhpssScreening.getFacilityId());
 
         return responseDto;
     }

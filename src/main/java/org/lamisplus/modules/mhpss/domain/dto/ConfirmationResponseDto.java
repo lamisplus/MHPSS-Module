@@ -30,4 +30,5 @@ public class ConfirmationResponseDto {
     private LocalDate encounterDate;
     private String patientVisit;
     private String screeningId;
+    private Long facilityId;
 }

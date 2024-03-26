@@ -19,4 +19,5 @@ public class ScreeningResponseDto {
     private LocalDate encounterDate;
     private String patientVisit;
     private String screenedBy;
+    private Long facilityId;
 }

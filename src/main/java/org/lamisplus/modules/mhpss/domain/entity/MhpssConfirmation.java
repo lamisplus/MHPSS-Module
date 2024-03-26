@@ -132,6 +132,8 @@ public class MhpssConfirmation implements Serializable, Persistable<String> {
     @Column(nullable = false, name = "updated_by")
     private String updatedBy;
 
+    private Long facilityId;
+
     @Override
     public boolean isNew() {
         return id == null;

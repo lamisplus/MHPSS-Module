@@ -60,6 +60,7 @@ public class MhpssConfirmationServiceImpl implements MhpssConfirmationService {
         mhpssConfirmation.setCreatedBy(SecurityUtils.getCurrentUserLogin ().orElse (""));
         mhpssConfirmation.setUpdatedBy(SecurityUtils.getCurrentUserLogin ().orElse (""));
         mhpssConfirmation.setEncounterDate(confirmationRequestDto.getEncounterDate());
+        mhpssConfirmation.setFacilityId(mhpssScreening.getFacilityId());
 
         return convertEntityToResponseDto(mhpssConfirmationRepository.save(mhpssConfirmation));
     }
@@ -154,6 +155,7 @@ public class MhpssConfirmationServiceImpl implements MhpssConfirmationService {
         responseDto.setEncounterDate((mhpssConfirmation.getEncounterDate()));
         responseDto.setPatientVisit(mhpssConfirmation.getPatientVisit().getUuid());
         responseDto.setScreeningId(mhpssConfirmation.getMhpssScreening().getId());
+        responseDto.setFacilityId(mhpssConfirmation.getFacilityId());
 
         return responseDto;
     }
