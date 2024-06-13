@@ -21,6 +21,7 @@ export const ConfirmationProvider = ({children}) => {
             diagnosis: '',
             diagnosedBy: '',
             clinicianName: '',
+            comment:'',
             encounterDate: ''
         },
         action: '',

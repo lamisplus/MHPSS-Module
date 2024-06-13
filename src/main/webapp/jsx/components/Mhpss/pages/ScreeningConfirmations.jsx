@@ -95,6 +95,7 @@ const ScreeningConfirmations = () => {
         diagnosis: initialFormValues.diagnosis,
         diagnosedBy: initialFormValues.diagnosedBy,
         clinicianName: initialFormValues.clinicianName,
+        comment:"",
         encounterDate: initialFormValues.encounterDate
     }
 
@@ -437,6 +438,16 @@ const ScreeningConfirmations = () => {
                                                     />
                                                 </Grid>
                                             </Grid>
+                                            <Grid container className={classes.gridVerticalSpacing}>
+                                                <Grid item xs={12}>
+                                                    <TextfieldWrapper
+                                                        name="comment"
+                                                        label="Comment"
+                                                        multiline={true}
+                                                        rows={4}
+                                                    />
+                                                </Grid>
+                                            </Grid>
 
                                             <Grid container className={classes.gridVerticalSpacing}>
                                                 <Grid item xs={12}>
@@ -448,6 +459,7 @@ const ScreeningConfirmations = () => {
                                                     />
                                                 </Grid>
                                             </Grid>
+
 
                                             <Grid container xs={12} spacing={2}>
                                                 <Grid item xs={6}>
