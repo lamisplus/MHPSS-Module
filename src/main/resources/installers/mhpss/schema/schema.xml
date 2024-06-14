@@ -99,18 +99,4 @@
             </column>
         </createTable>
     </changeSet>
-    <!-- New changeSet to add comment column to mhpss_confirmation -->
-    <changeSet id="add-comment-column-to-mhpss_confirmation_12062024" author="Hafiz-Danmanu">
-        <preConditions onFail="MARK_RAN">
-            <not>
-                <columnExists tableName="mhpss_confirmation" columnName="comment" />
-            </not>
-
-        </preConditions>
-        <addColumn tableName="mhpss_confirmation">
-            <column name="comment" type="text"/>
-        </addColumn>
-    </changeSet>
-
-
 </databaseChangeLog>
