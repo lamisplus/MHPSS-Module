@@ -95,7 +95,7 @@ const ScreeningConfirmations = () => {
         diagnosis: initialFormValues.diagnosis,
         diagnosedBy: initialFormValues.diagnosedBy,
         clinicianName: initialFormValues.clinicianName,
-        comment:"",
+        comment:initialFormValues.comment,
         encounterDate: initialFormValues.encounterDate
     }
 
