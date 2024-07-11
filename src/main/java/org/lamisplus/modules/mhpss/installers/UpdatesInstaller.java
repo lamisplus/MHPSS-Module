@@ -7,7 +7,7 @@ import org.springframework.core.annotation.Order;
 @Order(2)
 @Installer(name = "updates-installer",
         description = "Updates the database for mhpss tables",
-        version = 2)
+        version = 3)
 public class UpdatesInstaller extends AcrossLiquibaseInstaller {
     public UpdatesInstaller() {
         super("classpath:installers/mhpss/schema/updates.xml");
