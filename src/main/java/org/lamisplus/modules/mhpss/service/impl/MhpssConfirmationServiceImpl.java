@@ -130,6 +130,7 @@ public class MhpssConfirmationServiceImpl implements MhpssConfirmationService {
         mhpssConfirmation.setDiagnosis((confirmationRequestDto.getDiagnosis()));
         mhpssConfirmation.setDiagnosedBy((confirmationRequestDto.getDiagnosedBy()));
         mhpssConfirmation.setClinicianName((confirmationRequestDto.getClinicianName()));
+        mhpssConfirmation.setComment((confirmationRequestDto.getComment()));
         mhpssConfirmation.setEncounterDate((confirmationRequestDto.getEncounterDate()));
 
         return  mhpssConfirmation;
@@ -152,6 +153,7 @@ public class MhpssConfirmationServiceImpl implements MhpssConfirmationService {
         responseDto.setDiagnosis((mhpssConfirmation.getDiagnosis()));
         responseDto.setDiagnosedBy((mhpssConfirmation.getDiagnosedBy()));
         responseDto.setClinicianName((mhpssConfirmation.getClinicianName()));
+        responseDto.setComment((mhpssConfirmation.getComment()));
         responseDto.setEncounterDate((mhpssConfirmation.getEncounterDate()));
         responseDto.setPatientVisit(mhpssConfirmation.getPatientVisit().getUuid());
         responseDto.setScreeningId(mhpssConfirmation.getMhpssScreening().getId());

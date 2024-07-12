@@ -116,6 +116,9 @@ public class MhpssConfirmation implements Serializable, Persistable<String> {
     @Column(name = "clinician_name")
     private String clinicianName;
 
+    @Column(name = "comment")
+    private String comment;
+
     @NotNull(message = "Encounter Date Cannot Be Null")
     @Column(name = "encounter_date")
     private LocalDate encounterDate;

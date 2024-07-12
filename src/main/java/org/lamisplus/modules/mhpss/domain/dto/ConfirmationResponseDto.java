@@ -27,6 +27,7 @@ public class ConfirmationResponseDto {
     private String diagnosis;
     private String diagnosedBy;
     private String clinicianName;
+    private String comment;
     private LocalDate encounterDate;
     private String patientVisit;
     private String screeningId;

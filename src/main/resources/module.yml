@@ -10,6 +10,7 @@ menus:
     state: MHPSS
     url: /across/resources/static/mhpss/index.html
 umdLocation: /across/resources/static/mhpss/index.html
+gitHubLink: https://api.github.com/repos/lamisplus/MHPSS-Module/releases/latest
 webModules:
   - breadcrumb: MHPSS
     name: MhpssModule
